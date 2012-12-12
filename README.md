@@ -1,8 +1,8 @@
 MooPack
-=========
-#### DHTML UI Components for MooTools JavaScript framework ####
+=======
+#### DHTML UI plugins for MooTools JavaScript framework ####
 
-MooPack is set of useful DHTML UI components for MooTools and publishes under the MIT license. It aims to be smart and simple.
+MooPack is set of useful DHTML UI plugins for MooTools and publishes under the MIT license. It aims to be smart and simple.
 
 
 Rquirements
@@ -20,8 +20,8 @@ Features
 * RTL support for right-to-left languages
 * Easy setup
 
-Components
-----------
+Plugins
+-------
 * Grid
 * Tree
 * Window

@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+  <title>MooPack DropDown</title>
+  <link rel="stylesheet" type="text/css" href="../style/dropdown.css" media="screen" />
+  <script type="text/javascript" src="../lib/core.js"></script>
+  <script type="text/javascript" src="../lib/more.js"></script>
+  <script type="text/javascript" src="../source/MooPack.js"></script>
+  <script type="text/javascript" src="../source/DropDown.js"></script>
+  <style type="text/css">
+    body, button {font:12px arial;}
+    body {background-color:silver;}
+    h1 {font:bold 16px times; text-align:center; margin-top:100px;}
+    button {height:24px;}
+    input[type=text] {width:300px;}
+    #wrapper {width:300px; margin:0 auto;}
+    #workspace {height:60px;}
+  </style>
+</head>
+<body>
+  <h1>MooPack DropDown v1.0</h1>
+  <div id="wrapper">
+    <div id="workspace"></div>
+    <hr/>
+    <div id="options">
+      <button onclick="update()">Update</button>
+    </div>
+  </div>
+</body>
+<script>
+  function update() {
+  }
+  var myDropDown = new MooPack.DropDown('workspace');
+  myDropDown.setId('my_droprown');
+  myDropDown.setValue('You can set the value');
+  myDropDown.drawer.set('html', 'The content goes here..');
+</script>
+</html>
