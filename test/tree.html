@@ -31,8 +31,10 @@
           <td><input type="checkbox" name="chk_rootnode" value="rootnode" />Root Node<br/></td>
         </tr></table>
       </form>
-      <hr/>
       <button onclick="updateTree()">Update</button>
+      <hr/>
+      <button onclick="alertSelected()">Alert Selected</button>
+      <button onclick="alertNode(6)">Alert Node #6</button>
       <button onclick="expandSelected()">Expand Selected</button>
       <button onclick="collapseSelected()">Collapse Selected</button>
     </div>
@@ -50,42 +52,42 @@
     tree.loadData(data);
   }
 
-  function treeClick(node, e) {
+  function alertSelected() {
+    if (tree.selected) {
+      alert(tree.selected.text);
+    }
   }
-  function treeMouseOver(node, value, e) {
-  }
-  function treeMouseOut(node, value, e) {
+
+  function alertNode(id) {
+    alert(tree.getNode(id).text);
   }
 
   function expandSelected() {
-      tree.expandAll(tree.selected, true);
+    tree.expandAll(tree.selected);
   }
 
   function collapseSelected() {
-      tree.collapseAll(tree.selected, true);
+    tree.collapseAll(tree.selected);
   }
 
   var data = [
-      //[0, -1, 'Root'],
-      [1, 0, 'Item1', 1, {id:'node1', className:'item-class', seq:3, style:{color:'red', fontWeight:'bold'}}],
-      [2, 0, 'Item2', 1, {id:'node2', title:'This is a hint', seq:1}],
-      [4, 3, 'Item4', 1, {id:'node4', href:'javascript:alert("linkable node!")', target:'_blank'}],
-      [5, 3, 'Item5', 1, {id:'node5', checked: true}],
-      [3, 2, 'Item3', 1, {id:'node3'}],
-      [6, 5, 'Item6', 1, {id:'node6'}],
-      [7, 2, 'Item7', 1, {id:'node7'}],
-      [8, 7, 'Item8', 1, {id:'node8', seq:2}],
-      [9, 7, 'Item9', 1, {id:'node9', seq:1}],
-      [11, 20, 'ItemX', 1, {id:'node9', seq:1}],
-      [10, 0, 'Item10', 1, {id:'node10', seq:2}]
+    //[0, -1, 'Root'],
+    [1, 0, 'Item1', 1, {id:'node1', className:'item-class', seq:3, style:{color:'red', fontWeight:'bold'}}],
+    [2, 0, 'Item2', 1, {id:'node2', title:'This is a hint', seq:1}],
+    [4, 3, 'Item4', 1, {id:'node4', href:'javascript:alert("linkable node!")', target:'_blank'}],
+    [5, 3, 'Item5', 1, {id:'node5', checked: true}],
+    [3, 2, 'Item3', 1, {id:'node3'}],
+    [6, 5, 'Item6', 1, {id:'node6'}],
+    [7, 2, 'Item7', 1, {id:'node7'}],
+    [8, 7, 'Item8', 1, {id:'node8', seq:2}],
+    [9, 7, 'Item9', 1, {id:'node9', seq:1}],
+    [11, 20, 'ItemX', 1, {id:'node9', seq:1}],
+    [10, 0, 'Item10', 1, {id:'node10', seq:2}]
   ],
   //var data = [ [19, 0, 19], [21, 19, 21], [22, 21, 22], [23, 0, 23], [24, 23, 24]];
 
   frm = $('frm_options'),
   events = {
-    nodeclick: treeClick,
-    nodemouseover:treeMouseOver,
-    nodemouseout:treeMouseOut
   },
   tree;
   updateTree();

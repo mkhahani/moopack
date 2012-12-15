@@ -112,7 +112,8 @@ MooPack.Tree = new Class({
 
         buildTree(0, root);
         //this.dataObj = root;
-        //this.nodeById = nodeById;
+        this.nodeById = nodeById;
+        this.root = root;
 
         if (this.options.rootNode) {
             tree = this.treeFrom([root]);
@@ -128,26 +129,37 @@ MooPack.Tree = new Class({
     treeFrom: function(nodes) {
         var ul = new Element('ul');
         //nodes.sort( function(n1, n2) {return n1.data.seq - n2.data.seq;} );
-        nodes.each( function(nodeObj, i) {
-                nodeEl = nodeObj.toElement(this.nodeOptions, this.nodeEvents),
+        nodes.each( function(node, i) {
+                nodeEl = node.toElement(this.nodeOptions, this.nodeEvents),
                 nodeDiv = nodeEl.getElement('div');
             nodeDiv.addClass(this.baseClass + '-node');
             // if (this.checkboxes) {
-                // if (nodeObj.data.checked) {
-                    // this.selected.push(nodeObj.id);
+                // if (node.data.checked) {
+                    // this.selected.push(node.id);
                 // }
             // }
-            if (this.interactive && nodeObj.nodes.length !== 0) {
+            if (this.interactive && node.nodes.length !== 0) {
                 nodeEl.getElement('span').addClass('plus');
             }
             ul.grab(nodeEl);
-            this.nodeById[nodeObj.id] = nodeObj;
+            this.nodeById[node.id] = node;
         }, this);
 
         return ul;
     },
 
+//=================================================================================================
+// API
+//=================================================================================================
+    getNode: function(id) {
+        return this.nodeById[id];
+    },
+
     expandNode: function(node, recursive) {
+        if (node.nodes.length === 0) {
+            return;
+        }
+
         var ul = node.element.getElement('ul');
         if (!ul) {
             ul = this.treeFrom(node.nodes);
@@ -155,7 +167,6 @@ MooPack.Tree = new Class({
         } else {
             ul.show();
         }
-
         if (this.interactive) {
             node.expander.className = 'minus';
         }
@@ -168,7 +179,15 @@ MooPack.Tree = new Class({
     },
 
     collapseNode: function(node, recursive) {
-        var ul = node.element.getElement('ul').hide();
+        if (node.nodes.length === 0 || !node.element) {
+            return;
+        }
+
+        var ul = node.element.getElement('ul');
+        if (!ul) {
+            return;
+        }
+        ul.hide();
         node.expander.className = 'plus';
 
         if (recursive) {
@@ -196,11 +215,29 @@ MooPack.Tree = new Class({
     },
 
     expandAll: function(node) {
-        this.expandNode(node, true);
+        if (!node) {
+            node = this.root;
+        }
+        if (node.element) {
+            this.expandNode(node, true);
+        } else {
+            node.nodes.each(function(nd) {
+                this.expandNode(nd, true);
+            }, this);
+        }
     },
 
     collapseAll: function(node) {
-        this.collapseNode(node, true);
+        if (!node) {
+            node = this.root;
+        }
+        if (node.element) {
+            this.collapseNode(node, true);
+        } else {
+            node.nodes.each(function(nd) {
+                this.collapseNode(nd, true);
+            }, this);
+        }
     },
 
     _render: function() {
