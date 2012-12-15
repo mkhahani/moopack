@@ -1,5 +1,5 @@
 /**
- *  MooPack DropDown, a DHTML drop-down plugin based on Mootools
+ *  MooPack DropDown, a DHTML drop-down plugin for Mootools
  *  © 2012 Mohsen Khahani
  *
  *  Licensed under the MIT license
@@ -21,7 +21,7 @@ MooPack.DropDown = new Class({
     options: {
         baseClass : 'moopack-dropdown',
         editable  : false,
-        buttonType: 'disabled',  // [disabled, visible, smart]
+        buttonType: 'disabled'  // [disabled, visible, smart]
     },
 
     initialize: function (target, options) {
@@ -29,7 +29,7 @@ MooPack.DropDown = new Class({
 		Object.append(this, {
             baseClass : this.options.baseClass,
             editable  : this.options.editable,
-            buttonType: this.options.buttonType,
+            buttonType: this.options.buttonType
         });
         this.element = this.construct();
         if (target) {
@@ -65,7 +65,7 @@ MooPack.DropDown = new Class({
             entry.set({readonly: true});
         }
         if (this.buttonType === 'smart') {
-            entry.addEvent('mousedown', function() {this.button.hide()}.bind(this));
+            entry.addEvent('mousedown', function() {this.button.hide();}.bind(this));
         }
         entry.addEvent('mousedown', this.onEntryClick.bind(this));
 
@@ -76,8 +76,8 @@ MooPack.DropDown = new Class({
         var button = new Element('button');
         if (this.buttonType === 'smart') {
             button.hide();
-            element.addEvent('mouseover', function() {button.show()}.bind(this));
-            element.addEvent('mouseout', function() {button.hide()}.bind(this));
+            element.addEvent('mouseover', function() {button.show();}.bind(this));
+            element.addEvent('mouseout', function() {button.hide();}.bind(this));
         }
         button.addEvent('click', this.onButtonClick.bind(this));
 
@@ -87,9 +87,9 @@ MooPack.DropDown = new Class({
     buildDrawer: function() {
         var drawer = new Element('div', {'class': this.baseClass + '-drawer'}).hide(),
             events = {
-                mouseover: function() {this.hasFocus = true}.bind(this),
-                mouseout : function() {this.hasFocus = false}.bind(this)
-            }
+                mouseover: function() {this.hasFocus = true;}.bind(this),
+                mouseout : function() {this.hasFocus = false;}.bind(this)
+            };
         drawer.addEvents(events);
         document.addEvent('click', this.onLostFocus.bind(this));
 

@@ -24,6 +24,15 @@ var MooPack = {};
  * @return  void
  */
 Element.implement({
+    update: function(content) {
+        if (typeof content === 'string') {
+            this.set('html', content);
+        } else {
+            this.set('html', '').grab(content);
+        }
+        return this;
+    },
+
     equalize: function(el, options) {
         var size = el.getSize(),
             measure = this.getComputedSize();
@@ -38,5 +47,17 @@ Element.implement({
         if (options.contains('margin')) {
             this.setStyle('margin', el.getStyle('margin'));
         }
+    }
+});
+
+Array.implement({
+    partition: function(iterator, context) {
+        iterator = iterator || function(x) {return x;};
+        var trues = [], falses = [];
+        this.each(function(value, index) {
+            (iterator.call(context, value, index) ?
+                trues : falses).push(value);
+        });
+        return [trues, falses];
     }
 });
