@@ -70,7 +70,7 @@ MooPack.Tree.Node = new Class({
      * Builds node element
      *
      * @param   object   options {interactive:bool, checkboxes:bool}
-     * @param   object   events  {click, over, out, toggle}
+     * @param   object   events  {click, over, out, toggle, check}
      * @return  element  Node element
      */
     toElement: function(options, events) {
@@ -84,9 +84,11 @@ MooPack.Tree.Node = new Class({
         if (options.checkboxes) {
             var checkbox = new Element('input', {type: 'checkbox', value: this.id});
             checkbox.set('checked', Boolean(this.chked));
+            checkbox.addEvent('click', events.check.pass(this));
             div.grab(checkbox);
+            this.checkbox = checkbox;
         }
-        div.update(textEl.update(this.text));
+        div.grab(textEl.update(this.text));
 
         // events
         textEl.addEvent('click', events.click.pass(this));

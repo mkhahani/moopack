@@ -1,19 +1,15 @@
-.moopack-tree var {display:none;}
 .moopack-tree ul {list-style:none; margin:0; padding-left:20px;}
 .moopack-tree li div {display:inline-block;}
 .moopack-tree-caption {font-weight:bold; padding-bottom:2px;}
 .moopack-tree-node {cursor:pointer; margin-left:3px; vertical-align:middle;}
 .moopack-tree-node a {padding:1px 2px;}
-.moopack-tree-node.hover {color:blue;}
-.moopack-tree-node.selected {background-color:darkblue;}
-.moopack-tree-node.selected a {color:white;}
+.moopack-tree-node input {vertical-align:middle;}
+.moopack-tree-node.hover a {color:blue;}
+.moopack-tree-node.selected a {background-color:darkblue; color:white;}
 
-.moopack-tree-image {width:16px; height:16px; background-image:url(images/tree/spacer.png);}
 .moopack-tree span {display:inline-block; width:16px; height:20px; vertical-align:middle;}
 .moopack-tree span.plus {background:url(images/tree/plus.png) 0 50% no-repeat;}
 .moopack-tree span.minus {background:url(images/tree/minus.png) 0 50% no-repeat;}
-.ptree_ span.l {background:url(images/tree/l.png) 0 50% no-repeat;}
-.ptree_ span.r {background:url(images/tree/r.png) 0 50% no-repeat;}
 
 li.orphan a {color:red;}
 /*

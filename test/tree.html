@@ -30,15 +30,20 @@
           <td><input type="checkbox" name="chk_interactive" value="interactive" checked />Interactive<br/></td>
           <td><input type="checkbox" name="chk_checkboxes" value="checkboxes" />Checkboxes<br/></td>
           <td><input type="checkbox" name="chk_rootnode" value="rootnode" />Root Node<br/></td>
+          <td><input type="checkbox" name="chk_nodeselect" value="nodeselect" checked />Node Select<br/></td>
         </tr></table>
       </form>
       <button onclick="updateTree()">Update</button>
       <hr/>
       <button onclick="alertSelected()">Alert Selected</button>
+      <button onclick="alertChecked()">Alert Checked</button>
       <button onclick="alertNode()">Alert Node #6</button>
       <button onclick="selectNode()">Select Node #2</button>
+      <button onclick="checkAll()">Check All</button>
+      <button onclick="checkNone()">Check None</button>
       <button onclick="expandSelected()">Expand Selected</button>
       <button onclick="collapseSelected()">Collapse Selected</button>
+      <button onclick="test()">Test</button>
     </div>
   </div>
 </body>
@@ -47,7 +52,8 @@
     var options = {
       interactive: frm.chk_interactive.checked,
       checkboxes: frm.chk_checkboxes.checked,
-      rootNode: frm.chk_rootnode.checked
+      rootNode: frm.chk_rootnode.checked,
+      nodeSelect: frm.chk_nodeselect.checked
     };
     tree = new MooPack.Tree('workspace', options, events);
     tree.setId('simple_tree');
@@ -60,6 +66,10 @@
     }
   }
 
+  function alertChecked() {
+    alert(tree.checked);
+  }
+
   function alertNode() {
     alert(tree.getNode(6).text);
   }
@@ -68,12 +78,24 @@
     tree.select(tree.getNode(2));
   }
 
+  function checkAll() {
+    tree.checkAll(true);
+  }
+
+  function checkNone() {
+    tree.checkAll(false);
+  }
+
   function expandSelected() {
     tree.expandAll(tree.selected);
   }
 
   function collapseSelected() {
     tree.collapseAll(tree.selected);
+  }
+
+  function test() {
+    console.log(tree.selected);
   }
 
   var data = [
@@ -87,8 +109,8 @@
     [7, 2, 'Item7', false],
     [8, 7, 'Item8', false, 2],
     [9, 7, 'Item9', false, 1],
-    [11, 20, 'ItemX', false, 1],
-    [10, 0, 'Item10', false, 2]
+    [11, 20, 'ItemX', true, 1],
+    [10, 0, 'Item10', true, 2]
   ],
   //var data = [ [19, 0, 19], [21, 19, 21], [22, 21, 22], [23, 0, 23], [24, 23, 24]];
 
