@@ -22,41 +22,50 @@ MooPack.Tree = new Class({
         baseClass   : 'moopack-tree',
         interactive : true,
         checkboxes  : false,
+        nodeSelect  : true,
         rootNode    : false,
-        nodeSelect  : true
+        lazy        : false,
+        sortBy      : false  // 'id', 'text', 'seq', false
     },
 
     /**
      * Initiates the tree
      *
-     * @target  JS Object/String        Target element(ID) as tree container
-     * @options ProtopackTreeOptions    Tree options: {baseClass, checkboxes}
-     * @events  JS Object               Tree events: {nodeclick, nodemouseover, nodemouseout}
-     *
-     * @return  JS Object               A class instance of Tree 
+     * @param   mixed   target  Target element/ID as tree container (optional)
+     * @param   object  options Tree options (optional)
+     * @param   object  events  Tree events (optional)
+     * @return  void
      */
     initialize: function(target, options, events) {
         this.setOptions(options);
 		Object.append(this, {
-            baseClass   : this.options.baseClass,
-            interactive : this.options.interactive,
-            checkboxes  : this.options.checkboxes,
-            selected    : (this.checkboxes)? [] : null
+            baseClass: this.options.baseClass,
+            interactive: this.options.interactive,
+            checkboxes: this.options.checkboxes,
+            selected: (this.checkboxes)? [] : null,
+            events: events || {},
+            //dataById: {},
+            nodeById: {},
+            nodeOptions: {
+                checkboxes: this.options.checkboxes, 
+                interactive: this.options.interactive
+            },
+            nodeEvents: {
+                click: this.onNodeClick.bind(this),
+                over: this.onNodeOver.bind(this),
+                out: this.onNodeOut.bind(this),
+                toggle: this.toggleNode.bind(this)
+            }
         });
-        this.events = events || {};
-        this.dataById = {};
-        this.nodeById = {};
+
+        var sortBy = this.options.sortBy;
+        if (sortBy) {
+            this.sortFunc = (sortBy === 'text')?
+                function(n1, n2) {return n1.text > n2.text;} :
+                function(n1, n2) {return n1[sortBy] - n2[sortBy];};
+        }
+
         this.element = this.construct();
-        this.nodeOptions = {
-            checkboxes:  this.checkboxes, 
-            interactive: this.interactive
-        };
-        this.nodeEvents = {
-            click:  this.onNodeClick.bind(this),
-            over:   this.onNodeOver.bind(this),
-            out:    this.onNodeOut.bind(this),
-            toggle: this.toggleNode.bind(this)
-        };
         if (target) {
             $(target).update(this.element);
         }
@@ -82,19 +91,23 @@ MooPack.Tree = new Class({
     /**
      * Loads data and builds the tree
      *
-     * @param   data    Array   Array of nodes which each node is an array itself
-     *                          node: [id:int, pid:int, text:string, data:Obj]
-     *
+     * @param   data    Array   Array of nodes that each node is an array itself
+                                Possible values for node:
+                                [id, pid, text, checked, seq, data] or
+                                {id, pid, text, checked, seq, data}
      * @return  void
      */
     loadData: function(data) {
-        function buildTree(parent, nodeObj) {
+        function buildTree(parent, tree) {
             var store = data.partition(function(row) {
                 return row[1] == parent;
             });
             data = store[1];
             store[0].each(function(row) {
-                var node = nodeObj.addNode(row[0], row[1], row[2], row[3] || null);
+                var node = isObject? 
+                        new MooPack.Tree.Node(row.id, row.pid, row.text, row.checked, row.seq, row.data) :
+                        new MooPack.Tree.Node(row[0], row[1], row[2], row[3], row[4], row[5]);
+                tree.addNode(node);
                 nodeById[row[0]] = node;
                 if (data.length > 0) {
                     buildTree(row[0], node);
@@ -102,8 +115,9 @@ MooPack.Tree = new Class({
             });
         }
         var root = new MooPack.Tree.Node(0, -1, 'root'),
+            isObject = Type.isObject(data[0]),
             nodeById = {},
-            tree;
+            treeXHTML;
 
         // data.each( function(row, i) {
             // this.dataById[row[0]] = row;
@@ -116,19 +130,21 @@ MooPack.Tree = new Class({
         this.root = root;
 
         if (this.options.rootNode) {
-            tree = this.treeFrom([root]);
+            treeXHTML = this.treeFrom([root]);
         } else {
-            tree = this.treeFrom(root.nodes);
+            treeXHTML = this.treeFrom(root.nodes);
         }
         if (!this.interactive) {
             this.expandAll(root);
         }
-        this.element.update(tree);
+        this.element.update(treeXHTML);
     },
 
     treeFrom: function(nodes) {
         var ul = new Element('ul');
-        //nodes.sort( function(n1, n2) {return n1.data.seq - n2.data.seq;} );
+        if (this.options.sortBy) {
+            nodes.sort(this.sortFunc);
+        }
         nodes.each( function(node, i) {
                 nodeEl = node.toElement(this.nodeOptions, this.nodeEvents),
                 nodeDiv = nodeEl.getElement('div');
@@ -146,6 +162,68 @@ MooPack.Tree = new Class({
         }, this);
 
         return ul;
+    },
+
+    /**
+     * selects/checks node and updates `tree.selected`
+     */
+    onNodeClick: function(node) {
+        if (this.options.nodeSelect) {
+            this.clearSelection();
+            this.selectNode(node);
+        }
+        this.selected = node;
+    },
+
+    /**
+     * Adds `hover` class to the node
+     */
+    onNodeOver: function(node) {
+        node.element.getElement('div').addClass('hover');
+    },
+
+    /**
+     * Removes `hover` class from the node
+     */
+    onNodeOut: function(node) {
+        node.element.getElement('div').removeClass('hover');
+    },
+
+    /**
+     * Empties `tree.selected` and clears selected/checked nodes
+     */
+    clearSelection: function() {
+        if (this.checkboxes) {
+            this.selected.each(function(id) {
+                this.dataById[id].data.checked = false;
+                this.dataById[id].div.getElement('input').checked = false;
+            }.bind(this));
+            this.selected.clear();
+        } else {
+            if (this.selected) {
+                this.selected.container.removeClass('selected');
+            }
+            this.selected = null;
+        }
+    },
+
+    /**
+     * Highlights/checks node
+     */
+    selectNode: function(node) {
+        if (this.checkboxes) {
+            var checked = this.dataById[id].data.checked,
+                i = this.selected.indexOf(id);
+            if (checked) {
+                this.selected.splice(i, 1);
+            } else if (i === -1) {
+                this.selected.push(id);
+            }
+            this.dataById[id].data.checked = !checked;
+            this.dataById[id].div.getElement('input').checked = !checked;
+        } else {
+            node.container.addClass('selected');
+        }
     },
 
 //=================================================================================================
@@ -261,7 +339,7 @@ MooPack.Tree = new Class({
     _refresh: function() {
         this.data.each( function(row, index) {
             var inputs = this.element.select('input[type=checkbox][value=' + row[0] + ']');
-                checked = row[3]? row[3]['checked'] : false;
+                checked = row[3]? row[3].checked : false;
             inputs[0].checked = checked;
         }.bind(this));
     },
@@ -281,73 +359,11 @@ MooPack.Tree = new Class({
     },
 
     /**
-     * selects/checks node and updates `tree.selected`
-     */
-    onNodeClick: function(node) {
-        if (this.options.nodeSelect) {
-            this.clearSelection();
-            this.selectNode(node);
-        }
-        this.selected = node;
-    },
-
-    /**
-     * Adds `hover` class to the node
-     */
-    onNodeOver: function(node) {
-        node.element.getElement('div').addClass('hover');
-    },
-
-    /**
-     * Removes `hover` class from the node
-     */
-    onNodeOut: function(node) {
-        node.element.getElement('div').removeClass('hover');
-    },
-
-    /**
-     * Empties `tree.selected` and clears selected/checked nodes
-     */
-    clearSelection: function() {
-        if (this.checkboxes) {
-            this.selected.each(function(id) {
-                this.dataById[id].data.checked = false;
-                this.dataById[id].div.getElement('input').checked = false;
-            }.bind(this));
-            this.selected.clear();
-        } else {
-            if (this.selected) {
-                this.selected.container.removeClass('selected');
-            }
-            this.selected = null;
-        }
-    },
-
-    /**
-     * Highlights/checks node
-     */
-    selectNode: function(node) {
-        if (this.checkboxes) {
-            var checked = this.dataById[id].data.checked,
-                i = this.selected.indexOf(id);
-            if (checked) {
-                this.selected.splice(i, 1);
-            } else if (i === -1) {
-                this.selected.push(id);
-            }
-            this.dataById[id].data.checked = !checked;
-            this.dataById[id].div.getElement('input').checked = !checked;
-        } else {
-            node.container.addClass('selected');
-        }
-    },
-
-    /**
      * Updates `tree.selected` and selects/checks appropriate node(s)
      */
     select: function(sel) {
         if (this.checkboxes) {
-            function doSelect(id) {
+            doSelect = function(id) {
                 this.dataById[id].data.checked = true;
                 this.dataById[id].node.getElement('input').checked = true;
             };
@@ -361,6 +377,7 @@ MooPack.Tree = new Class({
                 doSelect.call(this, sel);
             }
         } else {
+            this.clearSelection();
             this.selected = sel;
             this.selectNode(sel);
         }
@@ -399,10 +416,10 @@ MooPack.Tree = new Class({
     },
 
     numberOfChildren: function(id) {
-        var count = 0
+        var count = 0;
         this.data.each( function(node) {
             if (node[1] == id) {
-                count++
+                count++;
             }
         });
         return count;

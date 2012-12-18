@@ -9,35 +9,32 @@ MooPack.Tree.Node = new Class({
      * @param   string  id      Node ID
      * @param   string  pid     Parent node ID
      * @param   string  text    Node text
-     * @param   mixed   value   Node value (for checkbox:[0,1])
+     * @param   mixed   chked   Checked status ([0,1] or [true, false]) / (optional)
+     * @param   int     seq     Sequence number
      * @param   mixed   data    User defined data (optional)
      *
      * @return  object  Class instance of Tree.Node
      */
-    initialize: function(id, pid, text, value, data) {
+    initialize: function(id, pid, text, chked, seq, data) {
         this.id    = id;
         this.pid   = pid;
         this.text  = text;
-        this.value = value;
+        this.chked = chked || false;
+        this.seq   = seq;
         this.data  = data || null;
         this.nodes = [];
     },
 
-    addNode: function(id, pid, text, value, data) {
-        var parent = this.getNode(pid, false),
-            node = new MooPack.Tree.Node(id, pid, text, value, data);
+    addNode: function(node) {
+        var parent = this.getNode(node.pid, false);
         parent.nodes.push(node);
-        return node;
     },
 
     getNode: function(id) {
         var res = false;
-
         if (this.id == id) {
             res = this;
-        }
-
-        if (res === false) {
+        } else {
             this.nodes.each(function(node) {
                 if (node.id == id) {
                     res = node;
@@ -77,24 +74,28 @@ MooPack.Tree.Node = new Class({
      * @return  element  Node element
      */
     toElement: function(options, events) {
+        if (this.element) {
+            return this.element;
+        }
+
         var li = new Element('li'),
             div = new Element('div'),
             textEl = new Element('a');
         if (options.checkboxes) {
             var checkbox = new Element('input', {type: 'checkbox', value: this.id});
-            checkbox.set('checked', Boolean(this.value));
+            checkbox.set('checked', Boolean(this.chked));
             div.grab(checkbox);
         }
         div.update(textEl.update(this.text));
 
         // events
-        textEl.addEvent('click', events['click'].pass(this));
-        div.addEvent('mouseover', events['over'].pass(this));
-        div.addEvent('mouseout', events['out'].pass(this));
+        textEl.addEvent('click', events.click.pass(this));
+        div.addEvent('mouseover', events.over.pass(this));
+        div.addEvent('mouseout', events.out.pass(this));
 
         if (options.interactive) {
             var expander = new Element('span', {'class':'spacer'});
-            expander.addEvent('click', events['toggle'].pass(this));
+            expander.addEvent('click', events.toggle.pass(this));
             li.grab(expander);
             this.expander = expander;
         }
@@ -106,16 +107,11 @@ MooPack.Tree.Node = new Class({
     },
 
     setId: function(id) {
-        this.id = id;
-        this.element.getElement('div').id = id;
+        this.container.id = id;
     },
 
-    setValue: function(value) {
-        this.value = value;
-    },
-
-    setText: function(text) {
-        this.text = text;
-        this.element.getElement('a').update(text);
+    update: function(data) {
+        // updates id, text, value
     }
+
 });

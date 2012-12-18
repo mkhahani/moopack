@@ -1,6 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
   <title>MooPack Tree</title>
   <link rel="stylesheet" type="text/css" href="../style/tree.css" media="screen" />
   <script type="text/javascript" src="../lib/core.js"></script>
@@ -34,7 +35,8 @@
       <button onclick="updateTree()">Update</button>
       <hr/>
       <button onclick="alertSelected()">Alert Selected</button>
-      <button onclick="alertNode(6)">Alert Node #6</button>
+      <button onclick="alertNode()">Alert Node #6</button>
+      <button onclick="selectNode()">Select Node #2</button>
       <button onclick="expandSelected()">Expand Selected</button>
       <button onclick="collapseSelected()">Collapse Selected</button>
     </div>
@@ -58,8 +60,12 @@
     }
   }
 
-  function alertNode(id) {
-    alert(tree.getNode(id).text);
+  function alertNode() {
+    alert(tree.getNode(6).text);
+  }
+
+  function selectNode() {
+    tree.select(tree.getNode(2));
   }
 
   function expandSelected() {
@@ -72,17 +78,17 @@
 
   var data = [
     //[0, -1, 'Root'],
-    [1, 0, 'Item1', 1, {id:'node1', className:'item-class', seq:3, style:{color:'red', fontWeight:'bold'}}],
-    [2, 0, 'Item2', 1, {id:'node2', title:'This is a hint', seq:1}],
-    [4, 3, 'Item4', 1, {id:'node4', href:'javascript:alert("linkable node!")', target:'_blank'}],
-    [5, 3, 'Item5', 1, {id:'node5', checked: true}],
-    [3, 2, 'Item3', 1, {id:'node3'}],
-    [6, 5, 'Item6', 1, {id:'node6'}],
-    [7, 2, 'Item7', 1, {id:'node7'}],
-    [8, 7, 'Item8', 1, {id:'node8', seq:2}],
-    [9, 7, 'Item9', 1, {id:'node9', seq:1}],
-    [11, 20, 'ItemX', 1, {id:'node9', seq:1}],
-    [10, 0, 'Item10', 1, {id:'node10', seq:2}]
+    [2, 0, 'Item2', false, 1],
+    [1, 0, 'Item1', false, 3],
+    [4, 3, 'Item4', false],
+    [5, 3, 'Item5', true],
+    [3, 2, 'Item3', false],
+    [6, 5, 'Item6', false],
+    [7, 2, 'Item7', false],
+    [8, 7, 'Item8', false, 2],
+    [9, 7, 'Item9', false, 1],
+    [11, 20, 'ItemX', false, 1],
+    [10, 0, 'Item10', false, 2]
   ],
   //var data = [ [19, 0, 19], [21, 19, 21], [22, 21, 22], [23, 0, 23], [24, 23, 24]];
 
