@@ -27,10 +27,10 @@
     <div id="options">
       <form id="frm_options">
         <table><tr>
-          <td><input type="checkbox" name="chk_interactive" value="interactive" checked />Interactive<br/></td>
-          <td><input type="checkbox" name="chk_checkboxes" value="checkboxes" />Checkboxes<br/></td>
-          <td><input type="checkbox" name="chk_rootnode" value="rootnode" />Root Node<br/></td>
-          <td><input type="checkbox" name="chk_nodeselect" value="nodeselect" checked />Node Select<br/></td>
+          <td><input type="checkbox" name="chk_interactive" onchange="updateTree()" checked />Interactive<br/></td>
+          <td><input type="checkbox" name="chk_checkboxes" onchange="updateTree()" />Checkboxes<br/></td>
+          <td><input type="checkbox" name="chk_rootnode" onchange="updateTree()" />Root Node<br/></td>
+          <td><input type="checkbox" name="chk_nodeselect" onchange="updateTree()" checked />Node Select<br/></td>
         </tr></table>
       </form>
       <button onclick="updateTree()">Update</button>
@@ -39,6 +39,7 @@
       <button onclick="alertChecked()">Alert Checked</button>
       <button onclick="alertNode()">Alert Node #6</button>
       <button onclick="selectNode()">Select Node #2</button>
+      <button onclick="check()">Check [1,2,5,6,7]</button>
       <button onclick="checkAll()">Check All</button>
       <button onclick="checkNone()">Check None</button>
       <button onclick="expandSelected()">Expand Selected</button>
@@ -76,6 +77,10 @@
 
   function selectNode() {
     tree.select(tree.getNode(2));
+  }
+
+  function check() {
+    tree.check([1,2,5,6,7]);
   }
 
   function checkAll() {

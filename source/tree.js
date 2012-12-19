@@ -325,6 +325,29 @@ MooPack.Tree = new Class({
         });
     },
 
+    /**
+     * Sets given nodes checked
+     */
+    check: function(ids) {
+        this.checkAll(false);
+        ids.each(function(id) {
+            var node = this.nodeById[id];
+            node.chked = true;
+            if (node.checkbox) {
+                node.checkbox.checked = true;
+            }
+        }, this);
+    },
+
+    /**
+     * Updates `tree.selected` and selects/checks appropriate node(s)
+     */
+    select: function(sel) {
+        this.clearSelection();
+        this.selected = sel;
+        this.selectNode(sel);
+    },
+
     _render: function() {
         if (!this.interactive) {
             return;
@@ -363,31 +386,6 @@ MooPack.Tree = new Class({
         }
 
         return res;
-    },
-
-    /**
-     * Updates `tree.selected` and selects/checks appropriate node(s)
-     */
-    select: function(sel) {
-        if (this.checkboxes) {
-            doSelect = function(id) {
-                this.dataById[id].data.checked = true;
-                this.dataById[id].node.getElement('input').checked = true;
-            };
-            this.clearSelection();
-            if (Object.isArray(sel)) {
-                sel = sel.uniq();
-                sel.each(doSelect, this);
-                this.selected = sel;
-            } else {
-                this.selected = [sel];
-                doSelect.call(this, sel);
-            }
-        } else {
-            this.clearSelection();
-            this.selected = sel;
-            this.selectNode(sel);
-        }
     },
 
     insertNode: function(node) {
