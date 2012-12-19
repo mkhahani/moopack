@@ -24,6 +24,7 @@ MooPack.Tree = new Class({
         checkboxes  : false,
         nodeSelect  : true,
         rootNode    : false,
+        orphanNodes : true,
         sortBy      : false  // 'id', 'text', 'seq', false
     },
 
@@ -108,7 +109,7 @@ MooPack.Tree = new Class({
                 var node = new MooPack.Tree.Node(row);
                 tree.addNode(node);
                 nodeById[row.id] = node;
-                if (node.chked) {
+                if (node.checked) {
                     checked.push(node.id);
                 }
                 if (data.length > 0) {
@@ -135,6 +136,14 @@ MooPack.Tree = new Class({
             this.checked = checked;
         }
 
+        if (this.options.orphanNodes) {
+            data.each(function(row) {
+                var node = new MooPack.Tree.Node(row);
+                node.orphan = true;
+                tree.nodes.push(node);
+            });
+        }
+
         if (this.options.rootNode) {
             treeXHTML = this.treeFrom([tree]);
         } else {
@@ -155,7 +164,10 @@ MooPack.Tree = new Class({
             var nodeEl = node.toElement(this.nodeOptions, this.nodeEvents);
             node.container.addClass(this.baseClass + '-node');
             if (this.interactive && node.nodes.length !== 0) {
-                nodeEl.getElement('span').addClass('plus');
+                node.expander.addClass('plus');
+            }
+            if (node.orphan) {
+                node.container.addClass('orphan');
             }
             ul.grab(nodeEl);
             this.nodeById[node.id] = node;

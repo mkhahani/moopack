@@ -4,14 +4,15 @@
 MooPack.Tree.Node = new Class({
 
     /**
-     * Initiates the tree node
+     * Initiates tree node
      *
-     * @param   string  id      Node ID
-     * @param   string  pid     Parent node ID
-     * @param   string  text    Node text
-     * @param   mixed   checked   Checked status ([0,1] or [true, false]) / (optional)
-     * @param   int     seq     Sequence number
-     * @param   mixed   data    User defined data (optional)
+     * @param   object  node    Node data:
+     *          string  id      Node ID
+     *          string  pid     Parent node ID
+     *          string  text    Node text
+     *          mixed   checked Checked status ([true, false] / optional)
+     *          int     seq     Sequence number (optional)
+     *          mixed   data    User defined data (optional)
      *
      * @return  object  Class instance of Tree.Node
      */
@@ -25,6 +26,12 @@ MooPack.Tree.Node = new Class({
         this.nodes   = [];
     },
 
+    /**
+     * Adds the node to the appropriate location(parent)
+     *
+     * @param   object  node    Object of Tree.Node
+     * @return  bool    True if the parent be found, otherwise false
+     */
     addNode: function(node) {
         var parent = this.getNode(node.pid);
         if (parent) {
@@ -35,6 +42,12 @@ MooPack.Tree.Node = new Class({
         }
     },
 
+    /**
+     * Searches for the node with given ID
+     *
+     * @param   int     id      Node ID
+     * @return  mixed   Node object or false if not found
+     */
     getNode: function(id) {
         var res = false;
         if (this.id == id) {
@@ -60,6 +73,12 @@ MooPack.Tree.Node = new Class({
         return res;
     },
 
+    /**
+     * Gets list of child nodes of `this` node
+     *
+     * @param   bool    recursive   Whether check through child nodes
+     * @return  array   List of node objects
+     */
     getNodes: function(recursive) {
         var nodes = this.nodes.clone();
         if (recursive) {
