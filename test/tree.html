@@ -27,13 +27,12 @@
     <div id="options">
       <form id="frm_options">
         <table><tr>
-          <td><input type="checkbox" name="chk_interactive" onchange="updateTree()" checked />Interactive<br/></td>
-          <td><input type="checkbox" name="chk_checkboxes" onchange="updateTree()" />Checkboxes<br/></td>
-          <td><input type="checkbox" name="chk_rootnode" onchange="updateTree()" />Root Node<br/></td>
-          <td><input type="checkbox" name="chk_nodeselect" onchange="updateTree()" checked />Node Select<br/></td>
+          <td><input type="checkbox" name="chk_interactive" onclick="updateTree()" checked />Interactive<br/></td>
+          <td><input type="checkbox" name="chk_checkboxes" onclick="updateTree()" />Checkboxes<br/></td>
+          <td><input type="checkbox" name="chk_rootnode" onclick="updateTree()" />Root Node<br/></td>
+          <td><input type="checkbox" name="chk_nodeselect" onclick="updateTree()" checked />Node Select<br/></td>
         </tr></table>
       </form>
-      <button onclick="updateTree()">Update</button>
       <hr/>
       <button onclick="alertSelected()">Alert Selected</button>
       <button onclick="alertChecked()">Alert Checked</button>
@@ -64,6 +63,8 @@
   function alertSelected() {
     if (tree.selected) {
       alert(tree.selected.text);
+    } else {
+      alert(null);
     }
   }
 

@@ -71,10 +71,6 @@ MooPack.Tree = new Class({
         if (target) {
             $(target).update(this.element);
         }
-        // default checked inputs does not work on IE6
-        //if (Prototype.Browser.IE6) {
-            //this._refresh.bind(this).delay(0.1);
-        //}
     },
 
     toElement: function() {
@@ -132,16 +128,20 @@ MooPack.Tree = new Class({
         this.nodeById = nodeById;
         this.root = tree;
 
-        if (this.checkboxes) {
-            this.checked = checked;
-        }
-
         if (this.options.orphanNodes) {
             data.each(function(row) {
                 var node = new MooPack.Tree.Node(row);
                 node.orphan = true;
                 tree.nodes.push(node);
+                nodeById[row.id] = node;
+                if (node.checked) {
+                    checked.push(node.id);
+                }
             });
+        }
+
+        if (this.checkboxes) {
+            this.checked = checked;
         }
 
         if (this.options.rootNode) {
@@ -177,14 +177,10 @@ MooPack.Tree = new Class({
     },
 
     /**
-     * selects/checks node and updates `tree.selected`
+     * Selects node and updates `tree.selected`
      */
     onNodeClick: function(node) {
-        if (this.options.nodeSelect) {
-            this.clearSelection();
-            this.selectNode(node);
-        }
-        this.selected = node;
+        this.select(node);
     },
 
     /**
@@ -202,32 +198,15 @@ MooPack.Tree = new Class({
     },
 
     /**
-     * selects/checks node and updates `tree.selected`
+     * Set node as checked and updates `tree.checked`
      */
     onNodeCheck: function(node) {
-        node.chked = node.checkbox.checked;
-        if (node.chked) {
+        node.checked = node.checkbox.checked;
+        if (node.checked) {
             this.checked.push(node.id);
         } else {
             this.checked.erase(node.id);
         }
-    },
-
-    /**
-     * Empties `tree.selected` and clears selected/checked nodes
-     */
-    clearSelection: function() {
-        if (this.selected) {
-            this.selected.container.removeClass('selected');
-        }
-        this.selected = null;
-    },
-
-    /**
-     * Highlights/checks node
-     */
-    selectNode: function(node) {
-        node.container.addClass('selected');
     },
 
 //=================================================================================================
@@ -270,7 +249,9 @@ MooPack.Tree = new Class({
             return;
         }
         ul.hide();
-        node.expander.className = 'plus';
+        if (this.interactive) {
+            node.expander.className = 'plus';
+        }
 
         if (recursive) {
             node.nodes.each(function(childNode) {
@@ -323,15 +304,20 @@ MooPack.Tree = new Class({
     },
 
     /**
-     * Sets all nodes checked/unchecked
+     * Updates `tree.selected` and selects/checks appropriate node(s)
      */
-    checkAll: function(checked) {
-        Object.each(this.nodeById, function(node) {
-            node.chked = checked;
-            if (node.checkbox) {
-                node.checkbox.checked = checked;
+    select: function(node) {
+        if (this.selected) {
+            this.selected.container.removeClass('selected');
+        }
+        if (!node) {
+            this.selected = null;
+        } else {
+            this.selected = node;
+            if (this.options.nodeSelect) {
+                node.container.addClass('selected');
             }
-        });
+        }
     },
 
     /**
@@ -341,20 +327,25 @@ MooPack.Tree = new Class({
         this.checkAll(false);
         ids.each(function(id) {
             var node = this.nodeById[id];
-            node.chked = true;
+            node.checked = true;
             if (node.checkbox) {
                 node.checkbox.checked = true;
             }
+            this.checked.push(id);
         }, this);
     },
 
     /**
-     * Updates `tree.selected` and selects/checks appropriate node(s)
+     * Sets all nodes checked/unchecked
      */
-    select: function(sel) {
-        this.clearSelection();
-        this.selected = sel;
-        this.selectNode(sel);
+    checkAll: function(checked) {
+        this.checked = checked? Object.keys(this.nodeById) : [];
+        Object.each(this.nodeById, function(node) {
+            node.checked = checked;
+            if (node.checkbox) {
+                node.checkbox.checked = checked;
+            }
+        });
     },
 
     _render: function() {
