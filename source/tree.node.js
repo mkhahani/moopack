@@ -9,25 +9,30 @@ MooPack.Tree.Node = new Class({
      * @param   string  id      Node ID
      * @param   string  pid     Parent node ID
      * @param   string  text    Node text
-     * @param   mixed   chked   Checked status ([0,1] or [true, false]) / (optional)
+     * @param   mixed   checked   Checked status ([0,1] or [true, false]) / (optional)
      * @param   int     seq     Sequence number
      * @param   mixed   data    User defined data (optional)
      *
      * @return  object  Class instance of Tree.Node
      */
-    initialize: function(id, pid, text, chked, seq, data) {
-        this.id    = id;
-        this.pid   = pid;
-        this.text  = text;
-        this.chked = chked || false;
-        this.seq   = seq;
-        this.data  = data || null;
-        this.nodes = [];
+    initialize: function(node) {
+        this.id      = node.id;
+        this.pid     = node.pid;
+        this.text    = node.text;
+        this.checked = node.checked || false;
+        this.seq     = node.seq;
+        this.data    = node.data || null;
+        this.nodes   = [];
     },
 
     addNode: function(node) {
-        var parent = this.getNode(node.pid, false);
-        parent.nodes.push(node);
+        var parent = this.getNode(node.pid);
+        if (parent) {
+            parent.nodes.push(node);
+            return true;
+        } else {
+            return false;
+        }
     },
 
     getNode: function(id) {
@@ -83,7 +88,7 @@ MooPack.Tree.Node = new Class({
             textEl = new Element('a');
         if (options.checkboxes) {
             var checkbox = new Element('input', {type: 'checkbox', value: this.id});
-            checkbox.set('checked', Boolean(this.chked));
+            checkbox.set('checked', Boolean(this.checked));
             checkbox.addEvent('click', events.check.pass(this));
             div.grab(checkbox);
             this.checkbox = checkbox;

@@ -101,25 +101,22 @@ MooPack.Tree = new Class({
     loadData: function(data) {
         function buildTree(parent, tree) {
             var store = data.partition(function(row) {
-                return row[1] == parent;
+                return row.pid == parent;
             });
             data = store[1];
             store[0].each(function(row) {
-                var node = isObject? 
-                        new MooPack.Tree.Node(row.id, row.pid, row.text, row.checked, row.seq, row.data) :
-                        new MooPack.Tree.Node(row[0], row[1], row[2], row[3], row[4], row[5]);
+                var node = new MooPack.Tree.Node(row);
                 tree.addNode(node);
-                nodeById[row[0]] = node;
+                nodeById[row.id] = node;
                 if (node.chked) {
                     checked.push(node.id);
                 }
                 if (data.length > 0) {
-                    buildTree(row[0], node);
+                    buildTree(row.id, node);
                 }
             });
         }
-        var root = new MooPack.Tree.Node(0, -1, 'root'),
-            isObject = Type.isObject(data[0]),
+        var tree = new MooPack.Tree.Node({id:0, pid:-1, text:'root'}),
             nodeById = {},
             checked = [],
             treeXHTML;
@@ -129,22 +126,22 @@ MooPack.Tree = new Class({
         // }, this);
         // this.rawData = data;
 
-        buildTree(0, root);
-        //this.dataObj = root;
+        buildTree(0, tree);
+        //this.dataObj = tree;
         this.nodeById = nodeById;
-        this.root = root;
+        this.root = tree;
 
         if (this.checkboxes) {
             this.checked = checked;
         }
 
         if (this.options.rootNode) {
-            treeXHTML = this.treeFrom([root]);
+            treeXHTML = this.treeFrom([tree]);
         } else {
-            treeXHTML = this.treeFrom(root.nodes);
+            treeXHTML = this.treeFrom(tree.nodes);
         }
         if (!this.interactive) {
-            this.expandAll(root);
+            this.expandAll(tree);
         }
         this.element.update(treeXHTML);
     },

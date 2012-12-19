@@ -103,8 +103,7 @@
     console.log(tree.selected);
   }
 
-  var data = [
-    //[0, -1, 'Root'],
+  /*var data = [
     [2, 0, 'Item2', false, 1],
     [1, 0, 'Item1', false, 3],
     [4, 3, 'Item4', false],
@@ -115,7 +114,22 @@
     [8, 7, 'Item8', false, 2],
     [9, 7, 'Item9', false, 1],
     [11, 20, 'ItemX', true, 1],
-    [10, 0, 'Item10', true, 2]
+    [10, 0, 'Item10', true, 2],
+    [12, 20, 'Item11', false]
+  ],*/
+  var data = [
+    {id:2, pid:0, text:'Item2', checked:false, seq:1},
+    {id:1, pid:0, text:'Item1', checked:false, seq:3},
+    {id:4, pid:3, text:'Item4', checked:false},
+    {id:5, pid:3, text:'Item5', checked:true},
+    {id:3, pid:2, text:'Item3', checked:false},
+    {id:6, pid:5, text:'Item6', checked:false},
+    {id:7, pid:2, text:'Item7', checked:false},
+    {id:8, pid:7, text:'Item8', checked:false, seq:2},
+    {id:9, pid:7, text:'Item9', checked:false, seq:1},
+    {id:11, pid:20, text:'ItemX', checked:true, seq:1},
+    {id:10, pid:0, text:'Item10', checked:true, seq:2},
+    {id:12, pid:20, text:'Item11', checked:false}
   ],
   //var data = [ [19, 0, 19], [21, 19, 21], [22, 21, 22], [23, 0, 23], [24, 23, 24]];
 
