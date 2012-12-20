@@ -51,6 +51,12 @@ Element.implement({
 });
 
 Array.implement({
+    pluck: function(prop){
+        return this.map(function(item){
+            return item[prop];
+        });
+    },
+
     partition: function(iterator, context) {
         iterator = iterator || function(x) {return x;};
         var trues = [], falses = [];
