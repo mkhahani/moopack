@@ -37,12 +37,15 @@
       <button onclick="alertSelected()">Alert Selected</button>
       <button onclick="alertChecked()">Alert Checked</button>
       <button onclick="alertNode()">Alert Node #6</button>
-      <button onclick="selectNode()">Select Node #2</button>
+      <button onclick="selectNode()">Select Node #6</button>
       <button onclick="check()">Check [1,2,5,6,7]</button>
       <button onclick="checkAll()">Check All</button>
       <button onclick="checkNone()">Check None</button>
       <button onclick="expandSelected()">Expand Selected</button>
       <button onclick="collapseSelected()">Collapse Selected</button>
+      <button onclick="insertNode()">Insert Node</button>
+      <button onclick="deleteNode()">Delete Selected</button>
+      <button onclick="updateNode()">Update Selected</button>
       <button onclick="test()">Test</button>
     </div>
   </div>
@@ -77,11 +80,11 @@
   }
 
   function selectNode() {
-    tree.select(tree.getNode(2));
+    tree.select(tree.getNode(6));
   }
 
   function check() {
-    tree.check([1,2,5,6,7]);
+    tree.setChecked([1,2,5,6,7]);
   }
 
   function checkAll() {
@@ -100,8 +103,30 @@
     tree.collapseAll(tree.selected);
   }
 
+  function insertNode() {
+    var pid = tree.selected? tree.selected.id : tree.root.id,
+        id = prompt('ID:');
+    if (id) {
+      tree.insertNode({id:id, pid:pid, text:'New Node', checked:true, seq:2}, true);
+    }
+  }
+
+  function deleteNode() {
+    if (tree.selected) {
+      alert('deleted nodes: ' + tree.deleteNode(tree.selected).pluck('id'));
+    }
+  }
+
+  function updateNode() {
+    var node = tree.selected;
+    if (node) {
+      tree.updateNode(node, {id:node.id, pid:6, text:'New Node', checked:true, seq:2}, true);
+    }
+  }
+
   function test() {
-    console.log(tree.selected);
+    //tree.openupNode(tree.getNode(6));
+    console.log(tree.getChildren(tree.selected, true));
   }
 
   var data = [
@@ -115,8 +140,7 @@
     {id:8, pid:7, text:'Item8', checked:false, seq:2},
     {id:9, pid:7, text:'Item9', checked:false, seq:1},
     {id:11, pid:20, text:'ItemX', checked:true, seq:1},
-    {id:10, pid:0, text:'Item10', checked:true, seq:2},
-    {id:12, pid:11, text:'Item11', checked:false}
+    {id:10, pid:0, text:'Item10', checked:true, seq:2}
   ],
 
   frm = $('frm_options'),

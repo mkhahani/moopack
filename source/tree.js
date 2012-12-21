@@ -108,31 +108,25 @@ MooPack.Tree = new Class({
                 if (node.checked) {
                     checked.push(node.id);
                 }
-                if (data.length > 0) {
+                if (data.length) {
                     buildTree(row.id, node);
                 }
             });
         }
-        var tree = new MooPack.Tree.Node({id:0, pid:-1, text:'root'}),
-            nodeById = {},
-            checked = [],
-            treeXHTML;
+        var root = new MooPack.Tree.Node({id:0, pid:-1, text:'root', isOpen:true}),
+            nodeById = {0: root},
+            checked = [];
 
-        // data.each( function(row, i) {
-            // this.dataById[row[0]] = row;
-        // }, this);
-        // this.rawData = data;
-
-        buildTree(0, tree);
-        //this.dataObj = tree;
+        buildTree(0, root);
+        this.root = root;
         this.nodeById = nodeById;
-        this.root = tree;
 
+        // Orphan nodes
         if (this.options.orphanNodes) {
             data.each(function(row) {
                 var node = new MooPack.Tree.Node(row);
                 node.orphan = true;
-                tree.nodes.push(node);
+                root.nodes.push(node);
                 nodeById[row.id] = node;
                 if (node.checked) {
                     checked.push(node.id);
@@ -144,36 +138,46 @@ MooPack.Tree = new Class({
             this.checked = checked;
         }
 
+        this.getNodeElement(root);
+        this.getChildElement(root);
         if (this.options.rootNode) {
-            treeXHTML = this.treeFrom([tree]);
+            this.element.update(new Element('ul').grab(this.root.element));
         } else {
-            treeXHTML = this.treeFrom(tree.nodes);
+            this.element.update(this.root.ul);
         }
         if (!this.interactive) {
-            this.expandAll(tree);
+            this.expandAll(root);
         }
-        this.element.update(treeXHTML);
     },
 
-    treeFrom: function(nodes) {
-        var ul = new Element('ul');
-        if (this.options.sortBy) {
-            nodes.sort(this.sortFunc);
-        }
-        nodes.each( function(node, i) {
-            var nodeEl = node.toElement(this.nodeOptions, this.nodeEvents);
+    getNodeElement: function(node) {
+        if (!node.element) {
+            node.element = node.toElement(this.nodeOptions, this.nodeEvents);
             node.container.addClass(this.baseClass + '-node');
-            if (this.interactive && node.nodes.length !== 0) {
-                node.expander.addClass('plus');
-            }
-            if (node.orphan) {
-                node.container.addClass('orphan');
-            }
-            ul.grab(nodeEl);
-            this.nodeById[node.id] = node;
-        }, this);
+            this.updateNodeStatus(node);
+            //node.label.addEvent('click', this.onNodeClick.bind(this).pass(node));
+        }
+        return node.element;
+    },
 
-        return ul;
+    getChildElement: function(node, visible) {
+        if (!node.ul) {
+            var ul = new Element('ul');
+            if (this.options.sortBy) {
+                node.nodes.sort(this.sortFunc);
+            }
+            node.nodes.each(function(node) {
+                ul.grab(this.getNodeElement(node));
+                this.nodeById[node.id] = node;
+            }, this);
+
+            node.ul = ul;
+            if (visible === false) {
+                ul.hide();
+            }
+            this.getNodeElement(node).grab(ul);
+        }
+        return node.ul;
     },
 
     /**
@@ -187,14 +191,14 @@ MooPack.Tree = new Class({
      * Adds `hover` class to the node
      */
     onNodeOver: function(node) {
-        node.element.getElement('div').addClass('hover');
+        node.container.addClass('hover');
     },
 
     /**
      * Removes `hover` class from the node
      */
     onNodeOut: function(node) {
-        node.element.getElement('div').removeClass('hover');
+        node.container.removeClass('hover');
     },
 
     /**
@@ -216,64 +220,46 @@ MooPack.Tree = new Class({
         return this.nodeById[id];
     },
 
-    expandNode: function(node, recursive) {
-        if (node.nodes.length === 0) {
+    openNode: function(node, recursive) {
+        if (!node.nodes.length) {
             return;
         }
 
-        var ul = node.element.getElement('ul');
-        if (!ul) {
-            ul = this.treeFrom(node.nodes);
-            node.element.grab(ul);
-        } else {
-            ul.show();
-        }
-        if (this.interactive) {
-            node.expander.className = 'minus';
-        }
+        this.getNodeElement(node);
+        this.getChildElement(node).show();
+        node.isOpen = true;
+        this.updateNodeStatus(node);
 
         if (recursive) {
             node.nodes.each(function(childNode) {
-                this.expandNode(childNode, true);
+                this.openNode(childNode, true);
             }, this);
         }
     },
 
-    collapseNode: function(node, recursive) {
-        if (node.nodes.length === 0 || !node.element) {
+    closeNode: function(node, recursive) {
+        if (!node.nodes.length || !node.element) {
             return;
         }
-
-        var ul = node.element.getElement('ul');
-        if (!ul) {
+        if (!node.ul) {
             return;
         }
-        ul.hide();
-        if (this.interactive) {
-            node.expander.className = 'plus';
-        }
+        node.ul.hide();
+        node.isOpen = false;
+        this.updateNodeStatus(node);
 
         if (recursive) {
             node.nodes.each(function(childNode) {
-                this.collapseNode(childNode, true);
+                this.closeNode(childNode, true);
             }, this);
         }
     },
 
     toggleNode: function(node) {
-        var ul = node.element.getElement('ul');
-        if (!ul) {
-            ul = this.treeFrom(node.nodes);
-            node.element.grab(ul);
-            node.expander.className = 'minus';
+        if (node.isOpen) {
+            this.closeNode(node);
         } else {
-            if (ul.isDisplayed()) {
-                ul.hide();
-                node.expander.className = 'plus';
-            } else {
-                ul.show();
-                node.expander.className = 'minus';
-            }
+            this.openNode(node);
         }
     },
 
@@ -281,25 +267,28 @@ MooPack.Tree = new Class({
         if (!node) {
             node = this.root;
         }
-        if (node.element) {
-            this.expandNode(node, true);
-        } else {
-            node.nodes.each(function(nd) {
-                this.expandNode(nd, true);
-            }, this);
-        }
+        this.openNode(node, true);
+        node.nodes.each(function(nd) {
+            this.openNode(nd, true);
+        }, this);
     },
 
     collapseAll: function(node) {
         if (!node) {
             node = this.root;
-        }
-        if (node.element) {
-            this.collapseNode(node, true);
         } else {
-            node.nodes.each(function(nd) {
-                this.collapseNode(nd, true);
-            }, this);
+            this.closeNode(node, true);
+        }
+        node.nodes.each(function(nd) {
+            this.closeNode(nd, true);
+        }, this);
+    },
+
+    openupNode: function(node) {
+        var parent = this.nodeById[node.pid];
+        if (parent) {
+            this.openNode(parent);
+            this.openupNode(parent);
         }
     },
 
@@ -314,6 +303,7 @@ MooPack.Tree = new Class({
             this.selected = null;
         } else {
             this.selected = node;
+            this.openupNode(node);
             if (this.options.nodeSelect) {
                 node.container.addClass('selected');
             }
@@ -323,7 +313,7 @@ MooPack.Tree = new Class({
     /**
      * Sets given nodes checked
      */
-    check: function(ids) {
+    setChecked: function(ids) {
         this.checkAll(false);
         ids.each(function(id) {
             var node = this.nodeById[id];
@@ -348,101 +338,112 @@ MooPack.Tree = new Class({
         });
     },
 
-    _render: function() {
-        if (!this.interactive) {
+    updateNodeStatus: function(node) {
+        if (this.interactive) {
+            if (!node.nodes.length) {
+                node.expander.className = 'spacer';
+            } else {
+                node.expander.className = node.isOpen? 'minus' : 'plus';
+            }
+        }
+        if (node.orphan) {
+            node.container.addClass('orphan');
+        } else {
+            node.container.removeClass('orphan');
+        }
+    },
+
+    insertNode: function(data, locate) {
+        var parent = this.nodeById[data.pid],
+            node = new MooPack.Tree.Node(data);
+        this.getNodeElement(node)
+        if (!parent) {
+            parent = this.root;
+        }
+        parent.nodes.push(node);
+        this.getNodeElement(parent);
+        if (locate) {
+            this.openNode(parent);
+            this.openupNode(parent);
+        } else {
+            locate = false;
+            this.updateNodeStatus(parent);
+        }
+        if (!parent.ul) {
+            this.getChildElement(parent, locate);
+        } else {
+            parent.ul.grab(this.getNodeElement(node));
+        }
+        this.nodeById[node.id] = node;
+    },
+
+    deleteNode: function(node) {
+        var deletedNodes = [];
+        if (!node.orphan) {
+            var nodes = this.nodeById[node.pid].nodes;
+            deletedNodes = node.getNodes();
+            for (var i = 0; i < nodes.length; i++) {
+                if (nodes[i].id === node.id) {
+                    nodes.splice(i, 1);
+                    break;
+                }
+            }
+        }
+        deletedNodes.push(node);
+        this.nodeById[node.id].element.dispose();
+        delete this.nodeById[node.id];
+        return deletedNodes;
+    },
+
+    updateNode: function(node, data, locate) {
+        if (node.id !== data.id) {
+            throw 'Tree Error: Update with new ID still is not supported.';
             return;
         }
-        var nodes = this.element.select('div');
-        nodes.each(function(node) {
-            if (node.next()) {
-                if (node.next().visible()) {
-                    node.previous('span').baseClass = 'minus';
-                } else {
-                    node.previous('span').baseClass = 'plus';
+        if (node.pid !== data.pid) {
+            var parent = this.getNode(node.pid),
+                newParent = this.getNode(data.pid);
+            if (parent) {
+                var nodes = parent.nodes;
+                for (var i = 0; i < nodes.length; i++) {
+                    if (nodes[i].id === node.id) {
+                        nodes.splice(i, 1);
+                        break;
+                    }
                 }
-            } else {
-                node.previous('span').baseClass = 'l';
+                this.getNodeElement(newParent);
+                this.updateNodeStatus(parent);
             }
-        });
-    },
-
-    _refresh: function() {
-        this.data.each( function(row, index) {
-            var inputs = this.element.select('input[type=checkbox][value=' + row[0] + ']');
-                checked = row[3]? row[3].checked : false;
-            inputs[0].checked = checked;
-        }.bind(this));
-    },
-
-    _sort: function(node1, node2) {
-        var n1 = node1[2].toLowerCase(),
-            n2 = node2[2].toLowerCase(),
-            res = 0;
-
-        if (n1 > n2) {
-            res = 1;
-        } else if (n1 < n2) {
-            res = -1;
-        }
-
-        return res;
-    },
-
-    insertNode: function(node) {
-        this.data.push(node);
-        this.reload();
-    },
-
-    deleteNode: function(id) {
-        var index = this._getNodeIndex(id);
-        if (index != -1) {
-            this.data.splice(index, 1);
-            this.reload();
+            if (newParent) {
+                newParent.nodes.push(node);
+                node.orphan = false;
+                this.updateNodeStatus(node);
+                if (locate) {
+                    this.openNode(newParent);
+                    this.openupNode(newParent);
+                } else {
+                    newParent.isOpen = locate = false;
+                    this.updateNodeStatus(newParent);
+                }
+                if (!newParent.ul) {
+                    this.getChildElement(newParent, locate);
+                } else {
+                    newParent.ul.grab(this.getNodeElement(node));
+                }
+                //this.updateNodeStatus(newParent);
+            }
         }
     },
 
-    updateNode: function(id, node) {
-        var index = this._getNodeIndex(id);
-        if (index != -1) {
-            this.data.splice(index, 1);
-        }
-        this.insertNode(node);
-    },
-
-    hasChild: function(id) {
-        var res = false;
-        this.data.each( function(node) {
-            if (node[1] == id) {
-                res = true;
-                throw $break;
-            }
-        });
-        return res;
-    },
-
-    numberOfChildren: function(id) {
-        var count = 0;
-        this.data.each( function(node) {
-            if (node[1] == id) {
-                count++;
-            }
-        });
-        return count;
+    getChildren: function(node, grandchild) {
+        return node.getNodes(grandchild);
     },
 
     setId: function(id) {
         this.element.id = id;
     },
 
-    setCaption: function(caption) {
-        if (this.caption) {
-            this.caption.update(caption);
-        } else {
-            //rootNode = new MooPack.Tree.Node(this.checkboxes, this.caption);
-            this.caption = new Element('div', {'class': this.baseClass + '-caption'}).update(caption);
-            this.element.insert({before: this.caption});
-        }
-        return this.caption;
+    setRoot: function(data) {
     }
 
 });

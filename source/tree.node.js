@@ -24,6 +24,7 @@ MooPack.Tree.Node = new Class({
         this.seq     = node.seq;
         this.data    = node.data || null;
         this.nodes   = [];
+        this.isOpen  = node.isOpen || false;
     },
 
     /**
@@ -53,38 +54,41 @@ MooPack.Tree.Node = new Class({
         if (this.id == id) {
             res = this;
         } else {
-            this.nodes.each(function(node) {
-                if (node.id == id) {
-                    res = node;
-                    throw $break;
-                }
-            });
+            try {
+                this.nodes.each(function(node) {
+                    if (node.id == id) {
+                        res = node;
+                        throw {};
+                    }
+                });
+            } catch(e) {}
         }
 
         if (res === false) {
-            this.nodes.each(function(node) {
-                res = node.getNode(id);
-                if (res) {
-                    throw $break;
-                }
-            });
+            try {
+                this.nodes.each(function(node) {
+                    res = node.getNode(id);
+                    if (res) {
+                        throw {};
+                    }
+                });
+            } catch(e) {}
         }
 
         return res;
     },
 
     /**
-     * Gets list of child nodes of `this` node
+     * Gets list of child nodes
      *
-     * @param   bool    recursive   Whether check through child nodes
+     * @param   bool    all  Whether include nodes of nodes or not
      * @return  array   List of node objects
      */
-    getNodes: function(recursive) {
+    getNodes: function(all) {
         var nodes = this.nodes.clone();
-        if (recursive) {
+        if (all) {
             this.nodes.each(function(node) {
-                var res = node.getNodes(true);
-                nodes = nodes.concat(res);
+                nodes = nodes.concat(node.getNodes(true));
             });
         }
         return nodes;
@@ -126,6 +130,7 @@ MooPack.Tree.Node = new Class({
             this.expander = expander;
         }
         li.grab(div);
+        this.label = textEl;
         this.element = li;
         this.container = div;
 
