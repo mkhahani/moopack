@@ -16,7 +16,7 @@ MooPack.Tree = new Class({
 
     version: '1.0dev',
 
-	Implements: Options,
+	Implements: [Options, Events],
 
     options: {
         baseClass   : 'moopack-tree',
@@ -50,15 +50,6 @@ MooPack.Tree = new Class({
             checkboxes: this.checkboxes,
             interactive: this.interactive
         };
-        this.nodeEvents = {
-            click: this.onNodeClick.bind(this),
-            over: this.onNodeOver.bind(this),
-            out: this.onNodeOut.bind(this),
-            toggle: this.toggleNode.bind(this)
-        };
-        if (this.checkboxes) {
-            this.nodeEvents.check = this.onNodeCheck.bind(this);
-        }
 
         var sortBy = this.options.sortBy;
         if (sortBy) {
@@ -152,10 +143,20 @@ MooPack.Tree = new Class({
 
     getNodeElement: function(node) {
         if (!node.element) {
-            node.element = node.toElement(this.nodeOptions, this.nodeEvents);
+            node.element = node.toElement(this.nodeOptions);
             node.container.addClass(this.baseClass + '-node');
             this.updateNodeStatus(node);
-            //node.label.addEvent('click', this.onNodeClick.bind(this).pass(node));
+
+            // Events
+            node.label.addEvent('click', this.onNodeClick.bind(this, node));
+            node.container.addEvent('mouseover', this.onNodeOver.bind(this, node));
+            node.container.addEvent('mouseout', this.onNodeOut.bind(this, node));
+            if (this.checkboxes) {
+                node.checkbox.addEvent('click', this.onNodeCheck.bind(this, node));
+            }
+            if (this.interactive) {
+                node.expander.addEvent('click', this.toggleNode.bind(this, node));
+            }
         }
         return node.element;
     },
@@ -180,11 +181,15 @@ MooPack.Tree = new Class({
         return node.ul;
     },
 
+//=================================================================================================
+// Events
+//=================================================================================================
     /**
      * Selects node and updates `tree.selected`
      */
     onNodeClick: function(node) {
         this.select(node);
+        this.fireEvent('onNodeClick', node);
     },
 
     /**
