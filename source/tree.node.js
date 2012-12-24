@@ -110,7 +110,8 @@ MooPack.Tree.Node = new Class({
             div = new Element('div'),
             label = new Element('a');
         if (options.checkboxes) {
-            var checkbox = new Element('input', {type: 'checkbox', value: this.id});
+            var checkbox = new Element('input', 
+                {type: 'checkbox', name: 'chk_' + this.id, value: this.id});
             checkbox.set('checked', Boolean(this.checked));
             div.grab(checkbox);
             this.checkbox = checkbox;
