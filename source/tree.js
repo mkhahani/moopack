@@ -144,11 +144,11 @@ MooPack.Tree = new Class({
             this.updateNodeStatus(node);
 
             // Events
-            node.label.addEvent('click', this.onNodeClick.bind(this, node));
-            node.container.addEvent('mouseover', this.onNodeOver.bind(this, node));
-            node.container.addEvent('mouseout', this.onNodeOut.bind(this, node));
+            node.label.addEvent('click', this.nodeClick.bind(this, node));
+            node.container.addEvent('mouseover', this.nodeOver.bind(this, node));
+            node.container.addEvent('mouseout', this.nodeOut.bind(this, node));
             if (this.checkboxes) {
-                node.checkbox.addEvent('click', this.onNodeCheck.bind(this, node));
+                node.checkbox.addEvent('click', this.nodeCheck.bind(this, node));
             }
             if (this.interactive) {
                 node.expander.addEvent('click', this.toggleNode.bind(this, node));
@@ -175,43 +175,6 @@ MooPack.Tree = new Class({
             this.getNodeElement(node).grab(ul);
         }
         return node.ul;
-    },
-
-//=================================================================================================
-// Events
-//=================================================================================================
-    /**
-     * Selects node and updates `tree.selected`
-     */
-    onNodeClick: function(node) {
-        this.select(node);
-        this.fireEvent('onNodeClick', node);
-    },
-
-    /**
-     * Adds `hover` class to the node
-     */
-    onNodeOver: function(node) {
-        node.container.addClass('hover');
-    },
-
-    /**
-     * Removes `hover` class from the node
-     */
-    onNodeOut: function(node) {
-        node.container.removeClass('hover');
-    },
-
-    /**
-     * Set node as checked and updates `tree.checked`
-     */
-    onNodeCheck: function(node) {
-        node.checked = node.checkbox.checked;
-        if (node.checked) {
-            this.checked.push(node.id);
-        } else {
-            this.checked.erase(node.id);
-        }
     },
 
 //=================================================================================================
@@ -253,14 +216,6 @@ MooPack.Tree = new Class({
             node.nodes.each(function(childNode) {
                 this.closeNode(childNode, true);
             }, this);
-        }
-    },
-
-    toggleNode: function(node) {
-        if (node.isOpen) {
-            this.closeNode(node);
-        } else {
-            this.openNode(node);
         }
     },
 
