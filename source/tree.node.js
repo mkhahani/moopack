@@ -7,12 +7,13 @@ MooPack.Tree.Node = new Class({
      * Initiates tree node
      *
      * @param   object  node    Node data:
-     *          string  id      Node ID
-     *          string  pid     Parent node ID
+     *          mixed   id      Node ID (int/string)
+     *          mixed   pid     Parent node ID (int/string)
      *          string  text    Node text
-     *          mixed   checked Checked status ([true, false] / optional)
-     *          int     seq     Sequence number (optional)
-     *          mixed   data    User defined data (optional)
+     *          bool    checked Checked status
+     *          int     seq     Sequence number
+     *          mixed   data    User defined data
+     *          bool    isOpen  Node status (expanded or collapsed)
      *
      * @return  object  Class instance of Tree.Node
      */
@@ -23,8 +24,8 @@ MooPack.Tree.Node = new Class({
         this.checked = node.checked || false;
         this.seq     = node.seq;
         this.data    = node.data || null;
-        this.nodes   = [];
         this.isOpen  = node.isOpen || false;
+        this.nodes   = [];
     },
 
     /**
@@ -107,14 +108,14 @@ MooPack.Tree.Node = new Class({
 
         var li = new Element('li'),
             div = new Element('div'),
-            textEl = new Element('a');
+            label = new Element('a');
         if (options.checkboxes) {
             var checkbox = new Element('input', {type: 'checkbox', value: this.id});
             checkbox.set('checked', Boolean(this.checked));
             div.grab(checkbox);
             this.checkbox = checkbox;
         }
-        div.grab(textEl.update(this.text));
+        div.grab(label.update(this.text));
 
         if (options.interactive) {
             var expander = new Element('span', {'class':'spacer'});
@@ -122,7 +123,7 @@ MooPack.Tree.Node = new Class({
             this.expander = expander;
         }
         li.grab(div);
-        this.label = textEl;
+        this.label = label;
         this.element = li;
         this.container = div;
 

@@ -87,44 +87,40 @@ MooPack.Tree = new Class({
      * @return  void
      */
     loadData: function(data) {
-        function buildTree(parent, tree) {
-            var store = data.partition(function(row) {
-                return row.pid == parent;
-            });
-            data = store[1];
-            store[0].each(function(row) {
-                var node = new MooPack.Tree.Node(row);
-                tree.addNode(node);
-                nodeById[row.id] = node;
-                if (node.checked) {
-                    checked.push(node.id);
-                }
-                if (data.length) {
-                    buildTree(row.id, node);
-                }
-            });
-        }
         var root = new MooPack.Tree.Node({id:0, pid:-1, text:'root', isOpen:true}),
+            orphanNodes = new MooPack.Tree.Node({id:0, pid:0, text:null}),
+            isArray = (typeOf(data[0]) === 'array')? true : false,
             nodeById = {0: root},
-            checked = [];
+            checked = [],
+            i;
 
-        buildTree(0, root);
-        this.root = root;
-        this.nodeById = nodeById;
+        for (i = 0; i < data.length; i++) {
+            var row = (isArray)? {id:data[i][0], pid:data[i][1], text:data[i][2]} : data[i];
+            var node = new MooPack.Tree.Node(row);
+            nodeById[row.id] = node;
+            if (nodeById[row.pid]) {
+                nodeById[row.pid].nodes.push(node);
+            } else {
+                orphanNodes.nodes.push(node);
+            }
+            if (node.checked) {
+                checked.push(node.id);
+            }
+        }
 
         // Orphan nodes
-        if (this.options.orphanNodes) {
-            data.each(function(row) {
-                var node = new MooPack.Tree.Node(row);
+        for (i = 0; i < orphanNodes.nodes.length; i++) {
+            var node = orphanNodes.nodes[i];
+            if (nodeById[node.pid]) {
+                nodeById[node.pid].nodes.push(node);
+            } else {
                 node.orphan = true;
-                root.nodes.push(node);
-                nodeById[row.id] = node;
-                if (node.checked) {
-                    checked.push(node.id);
-                }
-            });
+                nodeById[0].nodes.push(node);
+            }
         }
 
+        this.root = root;
+        this.nodeById = nodeById;
         if (this.checkboxes) {
             this.checked = checked;
         }
