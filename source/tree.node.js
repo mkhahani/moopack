@@ -25,6 +25,7 @@ MooPack.Tree.Node = new Class({
         this.seq     = node.seq;
         this.data    = node.data || null;
         this.isOpen  = node.isOpen || false;
+        this.isLast  = node.isLast || false;
         this.nodes   = [];
     },
 
@@ -119,7 +120,7 @@ MooPack.Tree.Node = new Class({
         div.grab(label.update(this.text));
 
         if (options.interactive) {
-            var expander = new Element('span', {'class':'spacer'});
+            var expander = new Element('span');
             li.grab(expander);
             this.expander = expander;
         }
@@ -131,12 +132,33 @@ MooPack.Tree.Node = new Class({
         return li;
     },
 
-    setId: function(id) {
-        this.container.id = id;
+    /**
+     * Sets a node checked/unchecked
+     *
+     * @param   bool    checked     True/False
+     * @return  void
+     */
+    check: function(checked) {
+        this.checked = checked;
+        if (this.checkbox) {
+            this.checkbox.checked = checked;
+        }
     },
 
+    /**
+     * Updates properties of the node
+     *
+     * @param   object  data    {text, seq, data}
+     * @return  void
+     */
     update: function(data) {
-        // updates id, text, value
+        if (data.text) {
+            this.text = data.text;
+            this.label.update(data.text);
+        }
+        if (data.data) {
+            this.data = data.data;
+        }
     }
 
 });

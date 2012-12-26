@@ -87,7 +87,7 @@ MooPack.Tree = new Class({
      * @return  void
      */
     loadData: function(data) {
-        var root = new MooPack.Tree.Node({id:0, pid:-1, text:'root', isOpen:true}),
+        var root = new MooPack.Tree.Node({id:0, pid:-1, text:'root', isOpen:true, isLast:true}),
             orphanNodes = new MooPack.Tree.Node({id:0, pid:0, text:null}),
             isArray = (typeOf(data[0]) === 'array')? true : false,
             nodeById = {0: root},
@@ -125,12 +125,16 @@ MooPack.Tree = new Class({
             this.checked = checked;
         }
 
-        this.getNodeElement(root);
+        this.getNodeElement(root).addClass('root first');
         this.getChildElement(root);
         if (this.options.rootNode) {
-            this.element.update(new Element('ul').grab(this.root.element));
+            root.isFirst = true;
+            root.isLast = true;
+            this.element.update(new Element('ul').grab(root.element));
         } else {
-            this.element.update(this.root.ul);
+            root.nodes[0].isFirst = true;
+            root.nodes[0].element.addClass('first');
+            this.element.update(root.ul);
         }
         if (!this.interactive) {
             this.expandAll(root);
@@ -159,7 +163,8 @@ MooPack.Tree = new Class({
 
     getChildElement: function(node, visible) {
         if (!node.ul) {
-            var ul = new Element('ul');
+            var ul = new Element('ul'),
+                lastChild = node.nodes.getLast();
             if (this.options.sortBy) {
                 node.nodes.sort(this.sortFunc);
             }
@@ -167,6 +172,8 @@ MooPack.Tree = new Class({
                 ul.grab(this.getNodeElement(node));
                 this.nodeById[node.id] = node;
             }, this);
+            lastChild.isLast = true;
+            lastChild.element.addClass('last');
 
             node.ul = ul;
             if (visible === false) {
@@ -175,6 +182,27 @@ MooPack.Tree = new Class({
             this.getNodeElement(node).grab(ul);
         }
         return node.ul;
+    },
+
+    updateNodeStatus: function(node) {
+        if (this.interactive && node.nodes.length) {
+            node.expander.className = node.isOpen? 'minus' : 'plus';
+        }
+        if (node.isFirst) {
+            node.element.addClass('first');
+        } else {
+            node.element.removeClass('first');
+        }
+        if (node.isLast) {
+            node.element.addClass('last');
+        } else {
+            node.element.removeClass('last');
+        }
+        if (node.orphan) {
+            node.container.addClass('orphan');
+        } else {
+            node.container.removeClass('orphan');
+        }
     },
 
 //=================================================================================================
@@ -269,44 +297,27 @@ MooPack.Tree = new Class({
     /**
      * Sets given nodes checked
      */
-    setChecked: function(ids) {
-        this.checkAll(false);
-        ids.each(function(id) {
-            var node = this.nodeById[id];
-            node.checked = true;
-            if (node.checkbox) {
-                node.checkbox.checked = true;
-            }
+    setChecked: function(node_ids) {
+        this.checked.each(function(id) {
+            this.nodeById[id].check(false);
+        }, this);
+        node_ids.each(function(id) {
+            this.nodeById[id].check(true);
             this.checked.push(id);
         }, this);
     },
 
     /**
      * Sets all nodes checked/unchecked
+     *
+     * @param   bool    checked     True/False
+     * @return  void
      */
     checkAll: function(checked) {
         this.checked = checked? Object.keys(this.nodeById) : [];
         Object.each(this.nodeById, function(node) {
-            node.checked = checked;
-            if (node.checkbox) {
-                node.checkbox.checked = checked;
-            }
+            node.check(checked);
         });
-    },
-
-    updateNodeStatus: function(node) {
-        if (this.interactive) {
-            if (!node.nodes.length) {
-                node.expander.className = 'spacer';
-            } else {
-                node.expander.className = node.isOpen? 'minus' : 'plus';
-            }
-        }
-        if (node.orphan) {
-            node.container.addClass('orphan');
-        } else {
-            node.container.removeClass('orphan');
-        }
     },
 
     insertNode: function(data, locate) {
@@ -399,7 +410,8 @@ MooPack.Tree = new Class({
         this.element.id = id;
     },
 
-    setRoot: function(data) {
+    setRootText: function(text) {
+        this.root.update({text:text});
     }
 
 });

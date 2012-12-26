@@ -1,0 +1,11 @@
+.moopack-tree ul {list-style:none; margin:0; padding-left:20px;}
+.moopack-tree span {display:inline-block; width:16px; height:16px; vertical-align:middle;}
+.moopack-tree span.plus {background:url(images/plus.png) no-repeat;}
+.moopack-tree span.minus {background:url(images/minus.png) no-repeat;}
+
+.moopack-tree-node {display:inline-block; margin-left:3px;}
+.moopack-tree-node a {padding:0 2px; color:black; cursor:pointer;}
+.moopack-tree-node input {vertical-align:middle; margin:0;}
+.moopack-tree-node.hover a {color:blue; text-decoration:underline;}
+.moopack-tree-node.orphan a {color:silver;}
+.moopack-tree-node.selected a {background-color:highlight; color:highlighttext;}

@@ -1,0 +1,24 @@
+.moopack-tree {line-height:12px;}
+.moopack-tree ul {list-style:none; margin:0; padding-left:20px; background:url(images/i.png) repeat-y;}
+.moopack-tree > ul {background:none;}
+.moopack-tree .last > ul {background:none;}
+.moopack-tree span {display:inline-block; width:19px; height:16px; vertical-align:middle;}
+.moopack-tree span {background:url(images/t.png) no-repeat;}
+.moopack-tree span.plus {background-image:url(images/tplus.png);}
+.moopack-tree span.minus {background-image:url(images/tminus.png);}
+.moopack-tree .first > span {background-image:url(images/r.png);}
+.moopack-tree .last > span {background-image:url(images/l.png);}
+.moopack-tree .first.last > span {background-image:url(images/line.png);}
+.moopack-tree .first > span.plus {background-image:url(images/rplus.png);}
+.moopack-tree .first > span.minus {background-image:url(images/rminus.png);}
+.moopack-tree .last > span.plus {background-image:url(images/lplus.png);}
+.moopack-tree .last > span.minus {background-image:url(images/lminus.png);}
+.moopack-tree .first.last > span.plus {background-image:url(images/plus.png);}
+.moopack-tree .first.last > span.minus {background-image:url(images/minus.png);}
+
+.moopack-tree-node {display:inline-block; margin-left:3px;}
+.moopack-tree-node a {padding:0 2px; color:black; cursor:pointer;}
+.moopack-tree-node input {vertical-align:middle; margin:0;}
+.moopack-tree-node.hover a {color:blue; text-decoration:underline;}
+.moopack-tree-node.orphan a {color:silver;}
+.moopack-tree-node.selected a {background-color:highlight; color:highlighttext;}
