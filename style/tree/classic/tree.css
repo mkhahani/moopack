@@ -1,20 +1,20 @@
 .moopack-tree {line-height:12px;}
-.moopack-tree ul {list-style:none; margin:0; padding-left:20px; background:url(images/i.png) repeat-y;}
+.moopack-tree ul {list-style:none; margin:0; padding-left:20px; background:url(images/h-line.png) repeat-y;}
 .moopack-tree > ul {background:none;}
 .moopack-tree .last > ul {background:none;}
-.moopack-tree span {display:inline-block; width:19px; height:16px; vertical-align:middle;}
-.moopack-tree span {background:url(images/t.png) no-repeat;}
-.moopack-tree span.plus {background-image:url(images/tplus.png);}
-.moopack-tree span.minus {background-image:url(images/tminus.png);}
-.moopack-tree .first > span {background-image:url(images/r.png);}
-.moopack-tree .last > span {background-image:url(images/l.png);}
-.moopack-tree .first.last > span {background-image:url(images/line.png);}
-.moopack-tree .first > span.plus {background-image:url(images/rplus.png);}
-.moopack-tree .first > span.minus {background-image:url(images/rminus.png);}
-.moopack-tree .last > span.plus {background-image:url(images/lplus.png);}
-.moopack-tree .last > span.minus {background-image:url(images/lminus.png);}
-.moopack-tree .first.last > span.plus {background-image:url(images/plus.png);}
-.moopack-tree .first.last > span.minus {background-image:url(images/minus.png);}
+.moopack-tree span {display:inline-block; width:18px; height:18px; vertical-align:middle;}
+.moopack-tree span {background:url(images/states.png) no-repeat;}
+.moopack-tree span.plus {background-position:0 -18px;}
+.moopack-tree span.minus {background-position:0 -18px;}
+.moopack-tree .first > span {background-position:-36px 0;}
+.moopack-tree .last > span {background-position:-18px 0;}
+.moopack-tree .first.last > span {background-position:0 -54px;}
+.moopack-tree .first > span.plus {background-position:-36px -36px;}
+.moopack-tree .first > span.minus {background-position:-36px -36px;}
+.moopack-tree .last > span.plus {background-position:-18px -18px;}
+.moopack-tree .last > span.minus {background-position:-18px -18px;}
+.moopack-tree .first.last > span.plus {background-position:-54px -36px;}
+.moopack-tree .first.last > span.minus {background-position:-54px -36px;}
 
 .moopack-tree-node {display:inline-block; margin-left:3px;}
 .moopack-tree-node a {padding:0 2px; color:black; cursor:pointer;}
