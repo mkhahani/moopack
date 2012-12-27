@@ -1,9 +1,10 @@
+.moopack-tree {direction:rtl;}
 .moopack-tree {line-height:12px;}
-.moopack-tree ul {list-style:none; margin:0; padding-left:20px; background:url(images/h-line.png) repeat-y;}
+.moopack-tree ul {list-style:none; margin:0; padding-right:20px; background:url(images/rtl/h-line.png) right repeat-y;}
 .moopack-tree > ul {background:none;}
 .moopack-tree .last > ul {background:none;}
 .moopack-tree span {display:inline-block; width:18px; height:18px; vertical-align:middle;}
-.moopack-tree span {background:url(images/states.png) no-repeat;}
+.moopack-tree span {background:url(images/rtl/states.png) no-repeat;}
 .moopack-tree span.plus {background-position:0 -18px;}
 .moopack-tree span.minus {background-position:0 -36px;}
 .moopack-tree .first > span {background-position:-36px 0;}
