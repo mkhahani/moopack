@@ -31,7 +31,4 @@ Plugins
 * TreeSelect
 * Draggable
 
-Website
--------
-* [http://mohsenkhahani.ir/moopack](http://mohsenkhahani.ir/moopack)
 
