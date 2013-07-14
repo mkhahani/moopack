@@ -9,7 +9,7 @@
 .moopack-tree .first > span {background-position:-36px 0;}
 .moopack-tree .last > span {background-position:-18px 0;}
 .moopack-tree .first.last > span {background-position:0 -54px;}
-.moopack-tree .first > span.plus {background-position:-36px -36px;}
+.moopack-tree .first > span.plus {background-position:-36px -18px;}
 .moopack-tree .first > span.minus {background-position:-36px -36px;}
 .moopack-tree .last > span.plus {background-position:-18px -18px;}
 .moopack-tree .last > span.minus {background-position:-18px -36px;}
