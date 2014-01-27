@@ -12,7 +12,7 @@ Rquirements
 Features
 --------
 * Full featured DHTML
-* Lightweight with optimized source code
+* Lightweight with efficient code
 * Compatible with all major browsers
 * Customizable using CSS
 * Multi instance support
@@ -29,6 +29,3 @@ Plugins
 * Progress
 * Select
 * TreeSelect
-* Draggable
-
-

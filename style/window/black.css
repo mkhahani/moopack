@@ -1,0 +1,66 @@
+.mwindow-black {
+    position: absolute;
+    min-width: 200px;
+    min-height: 100px;
+    z-index: 20;
+    background-color: white;
+    border: 1px solid #CCCCCC;
+    border-radius: 2px;
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.200);
+    font-size: 12px;
+}
+.mwindow-black-overlay {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    background-color: black;
+    opacity: 0.5;
+    filter: alpha(opacity=50);
+}
+.mwindow-black-header {
+    padding: 10px 20px 10px 20px;
+    background-color: black;
+    color: white;
+}
+.mwindow-black-header.draggable {
+    cursor: move;
+}
+.mwindow-black-title {
+    font-size: 16px;
+    font-weight: bold;
+    text-align: left;
+    overflow: hidden;
+}
+.mwindow-black-content {
+    padding: 20px;
+    color: brown;
+    font-weight: bold;
+    line-height: 1.8;
+    overflow: hidden;
+}
+.mwindow-black-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: block;
+    width: 11px;
+    height: 11px;
+    background: url(close.png) no-repeat;
+    cursor: pointer;
+}
+.mwindow-black-resizer {
+    position: absolute;
+    bottom:2px;
+    right:2px;
+    display: block;
+    width: 11px;
+    height: 11px;
+    background: url(resize.png) right no-repeat;
+    cursor: se-resize;
+}
+.mwindow-black.dragging {
+    opacity: 0.8;
+    filter: alpha(opacity=80);
+}

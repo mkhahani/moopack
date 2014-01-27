@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>MooPack Window Demo</title>
+  <link rel="stylesheet" type="text/css" href="../style/window/window.css" media="screen" />
+  <link rel="stylesheet" type="text/css" href="../style/window/black.css" media="screen" />
+  <script type="text/javascript" src="../lib/core.js"></script>
+  <script type="text/javascript" src="../lib/more.js"></script>
+  <script type="text/javascript" src="../source/moopack.js"></script>
+  <script type="text/javascript" src="../source/window/window.js"></script>
+  <style type="text/css">
+    body, button {font:12px arial;}
+    h1 {font:bold 24px times; text-align:center;}
+    h1 + hr {margin:10px 0;}
+    label {font-weight:bold;}
+    button {padding:5px 20px;}
+    a {color:#555; text-decoration:none; border-bottom:1px dotted #555;}
+    #wrapper {width:800px; margin:50px auto 0 auto;}
+    #frm_options {float:left; width:220px; border:1px solid silver; padding:20px;}
+    #container {
+        float:right; width:530px; height:306px;
+        border:1px solid silver; background-color:#FFE0B2;
+    }
+    #about {font:10px tahoma; line-height:1.6; color:#555; text-align:center;}
+    .pretty-window {}
+    .pretty-window {}
+  </style>
+</head>
+<body>
+  <div id="wrapper">
+    <h1>MooPack Window Demo</h1><hr/>
+    <form id="frm_options">
+      <input type="checkbox" id="chk_modal" name="chk_modal" value="modal" /><label for="chk_modal">Modal</label><br/>
+      <input type="checkbox" id="chk_resizable" name="chk_resizable" value="resizable" checked /><label for="chk_resizable">Resizable</label><br/>
+      <input type="checkbox" id="chk_draggable" name="chk_draggable" value="draggable" checked /><label for="chk_draggable">Draggable</label><br/>
+      <input type="checkbox" id="chk_transparent" name="chk_transparent" value="tranparent" checked /><label for="chk_transparent">Transparent Drag</label><br/>
+      <input type="checkbox" id="chk_header" name="chk_header" value="header" checked /><label for="chk_header">Header</label><br/>
+      <input type="checkbox" id="chk_close" name="chk_close" value="close" checked /><label for="chk_close">Close Button</label><br/>
+      <input type="checkbox" id="chk_styled" name="chk_styled" value="styled" /><label for="chk_styled">Custom Style</label><br/>
+      <input type="checkbox" id="chk_escape" name="chk_escape" value="escape" checked /><label for="chk_escape">Close on escape</label><br/>
+      <input type="checkbox" id="chk_autoclose" name="chk_autoclose" value="autoclose" /><label for="chk_autoclose">Close on click outside the window</label><br/>
+      <input type="checkbox" id="chk_bind" name="chk_bind" value="bind" /><label for="chk_bind">Bind to an element</label><br/><br/>
+      <hr>
+      <button type="button" onclick="setTitle()">Set Title</button>
+      <button type="button" onclick="setContent()">Set Content</button>
+      <button type="button" onclick="setSize()">Set Size</button>
+      <button type="button" onclick="setPos()">Set Position</button>
+    </form>
+    <div id="container" style="position:relative; overflow:auto; display:none;"></div>
+    <div style="clear:both; margin-bottom:10px;"></div>
+    <hr/>
+    <div id="about">
+      <div><strong>MooPack Window</strong> v1.0</div>
+      <div>&copy; 2014 <a href="http://mohsenkhahani.ir/" target="_blank">Mohsen Khahani</a></div>
+    </div>
+  </div>
+</body>
+<script>
+    var wnd,
+        frm = $('frm_options');
+
+    $('frm_options').getElements('input').addEvent('click', openWindow);
+
+    function openWindow() {
+        var parent = (frm.chk_bind.checked)? 'container' : document.body,
+            title = 'Window title',
+            content = 'MooPack Window is a DHTML Window Component based on Mootools',
+            options = {
+                modal: frm.chk_modal.checked,
+                resizable: frm.chk_resizable.checked,
+                draggable: frm.chk_draggable.checked,
+                transparentDrag: frm.chk_transparent.checked,
+                showHeader: frm.chk_header.checked,
+                closeButton: frm.chk_close.checked,
+                escape: frm.chk_escape.checked,
+                autoClose: frm.chk_autoclose.checked,
+                className: frm.chk_styled.checked? 'mwindow-black' : 'mwindow'
+            };
+        
+        $('container').style.display = frm.chk_bind.checked? '' : 'none';
+        if (wnd) {
+          wnd.destroy();
+        }
+        wnd = new MooPack.Window(options, parent),
+        wnd.setTitle(title);
+        wnd.setContent(content);
+        wnd.setSize(300, 150);
+        wnd.addEvent('window:open', function() {console.log('Opened')})
+        wnd.addEvent('window:close', function() {console.log('Closed')})
+        wnd.open();
+    }
+
+    function setTitle() {
+        wnd.setTitle('The title has been updated!');
+        wnd.open();
+    }
+
+    function setContent() {
+        wnd.setContent('You may pass <b style="color:blue;">XHTML</b> or an <b>element ID</b> as window content.');
+        wnd.open();
+    }
+
+    function setSize() {
+        wnd.setSize(450, 250);
+        wnd.open();
+    }
+
+    function setPos() {
+        var px = Math.floor((Math.random() * 400)),
+            py = Math.floor((Math.random() * 300));
+        wnd.setPosition(px, py);
+        wnd.open();
+    }
+
+    openWindow();
+</script>
+</html>
