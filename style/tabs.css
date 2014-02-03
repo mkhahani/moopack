@@ -1,0 +1,34 @@
+/**
+ *  MooPack.Tabs Style
+ *  http://mohsenkhahani.ir/moopack
+ */
+
+ul.mtabs {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-bottom: 1px solid #BBB;
+}
+ul.mtabs:after {
+  content:".";
+  display:block;
+  height:0;
+  clear:both;
+  visibility:hidden;
+}
+.mtabs li.mtabs-tab {
+  float: left;
+}
+.mtabs li.active {
+  background-color: #666;
+}
+.mtabs li.active a {
+  color: white;
+  font-weight: bold;
+}
+.mtabs li.mtabs-tab a {
+  display: block;
+  padding: 5px 10px;
+  margin:0 2px;
+  cursor: pointer;
+}
