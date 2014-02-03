@@ -1,5 +1,5 @@
 /**
- *  MooPack Window is a DHTML Window Component based on MooTools JS framework
+ *  MooPack Window is a DHTML Window Component based on MooTools
  *
  * @author      Mohsen Khahani <mkhahani@gmail.com>
  * @copyright   2014 Mohsen Khahani
@@ -9,6 +9,7 @@
  * @url         http://mohsenkhahani.ir/moopack
  *
  * @dependency
+ *    - MooTools Core v1.4+
  *    - MooTools More (Element.Position, Drag)
  */
 
