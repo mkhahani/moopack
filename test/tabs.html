@@ -30,7 +30,7 @@
         <div id="sheet2">This is tab sheet #2</div>
         <div id="sheet3">This is tab sheet #3</div>
       </div>
-      <button onclick="myFunc()">setActive(2)</button>
+      <button onclick="staticTabs.setActive('sheet2');">setActive(Tab2)</button>
       <br/><br/><br/>
       <h4>Auto Created Tabs</h4>
       <div id="auto_tabs"></div>
@@ -46,9 +46,6 @@
   </div>
 </body>
 <script>
-  function myFunc() {
-      staticTabs.setActive(2);
-  }
   var staticTabs = new MooPack.Tabs('static_tabs', {defaultTab:3});
 
   var autoTabs = new MooPack.Tabs('auto_tabs', {findTabs:false});

@@ -58,6 +58,7 @@ MooPack.Tabs = new Class({
     construct: function () {
         var links = this.target.getElements('li a');
         this.tabs = this.target.getElements('li').addClass(this.options.className + '-tab');
+        this.tabNames = links.map(function (link) { return link.rel; });
         this.sheets = links.map(function (link) { return $(link.rel); });
         links.invoke('addEvent', 'click', this.switchTab.bind(this));
         if (this.options.hover) {
@@ -123,14 +124,15 @@ MooPack.Tabs = new Class({
     },
 
     /**
-     * Selects a tab and displays related sheet
+     * Activates specified tab
      *
-     * @param   integer index   tab index, begins from 1
+     * @param   mixed   index   tab index/name
      */
     setActive: function (index) {
+        index = isNaN(index)? this.tabNames.indexOf(index) : index - 1;
         this.reset();
-        this.tabs[index - 1].addClass('active');
-        this.sheets[index - 1].show();
-        this.fireEvent('tabs:change', this.tabs[index - 1].getElement('a').rel);
+        this.tabs[index].addClass('active');
+        this.sheets[index].show();
+        this.fireEvent('tabs:change', this.tabs[index].getElement('a').rel);
     }
 });
