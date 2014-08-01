@@ -286,7 +286,7 @@ MooPack.Window = new Class({
      * @return  void
      */
     setContent: function (content) {
-        this.content.set('html', content);
+        this.content.update(content);
     },
 
     /**
